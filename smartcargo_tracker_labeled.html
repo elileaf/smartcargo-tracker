@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCargo Tracker Enhanced Model with Labels</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+    <script src="https://threejs.org/examples/js/loaders/FontLoader.js"></script>
+    <script src="https://threejs.org/examples/js/geometries/TextGeometry.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create a parent group to hold all components
+        const parentGroup = new THREE.Group();
+        scene.add(parentGroup);
+
+        // Cargo container
+        const containerGeometry = new THREE.BoxGeometry(8, 5, 5);
+        const containerMaterial = new THREE.MeshBasicMaterial({
+            color: 0xCCCCCC,
+            wireframe: true,
+            opacity: 0.5,
+            transparent: true
+        });
+        const container = new THREE.Mesh(containerGeometry, containerMaterial);
+        parentGroup.add(container);
+
+        // Microcontroller (Device)
+        const deviceGeometry = new THREE.BoxGeometry(2, 1, 1);
+        const deviceMaterial = new THREE.MeshBasicMaterial({ color: 0x007BFF });
+        const device = new THREE.Mesh(deviceGeometry, deviceMaterial);
+        device.position.set(0, 0, 0);
+        parentGroup.add(device);
+
+        // GPS Module
+        const gpsGeometry = new THREE.BoxGeometry(0.7, 0.3, 0.3);
+        const gpsMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000 });
+        const gps = new THREE.Mesh(gpsGeometry, gpsMaterial);
+        gps.position.set(0, 0.7, 0);
+        parentGroup.add(gps);
+
+        // DHT22 Sensor
+        const dhtGeometry = new THREE.BoxGeometry(0.5, 0.3, 0.3);
+        const dhtMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
+        const dht = new THREE.Mesh(dhtGeometry, dhtMaterial);
+        dht.position.set(-1, 0, 0.5);
+        parentGroup.add(dht);
+
+        // ADXL345 Sensor
+        const adxlGeometry = new THREE.BoxGeometry(0.5, 0.3, 0.3);
+        const adxlMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
+        const adxl = new THREE.Mesh(adxlGeometry, adxlMaterial);
+        adxl.position.set(1, 0, 0.5);
+        parentGroup.add(adxl);
+
+        // Wireless Communication Module
+        const wirelessGeometry = new THREE.CylinderGeometry(0.3, 0.3, 1, 32);
+        const wirelessMaterial = new THREE.MeshBasicMaterial({ color: 0x33FF57 });
+        const wireless = new THREE.Mesh(wirelessGeometry, wirelessMaterial);
+        wireless.position.set(0, -0.7, 0);
+        wireless.rotation.x = Math.PI / 2;
+        parentGroup.add(wireless);
+
+        // Battery and TP4056 Module
+        const batteryGeometry = new THREE.BoxGeometry(1, 0.5, 0.5);
+        const batteryMaterial = new THREE.MeshBasicMaterial({ color: 0x0000FF });
+        const battery = new THREE.Mesh(batteryGeometry, batteryMaterial);
+        battery.position.set(0, -1.5, 0);
+        parentGroup.add(battery);
+
+        const tp4056Geometry = new THREE.BoxGeometry(0.5, 0.3, 0.2);
+        const tp4056Material = new THREE.MeshBasicMaterial({ color: 0xFF5733 });
+        const tp4056 = new THREE.Mesh(tp4056Geometry, tp4056Material);
+        tp4056.position.set(0, -1.8, 0);
+        parentGroup.add(tp4056);
+
+        // Add labels for each component
+        const loader = new THREE.FontLoader();
+        loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+            const labels = [
+                { text: "Microcontroller", position: [0, 0.5, 1.2] },
+                { text: "GPS Module", position: [0, 1.2, 0] },
+                { text: "DHT22 Sensor", position: [-1.5, 0, 0.8] },
+                { text: "ADXL345 Sensor", position: [1.5, 0, 0.8] },
+                { text: "Wireless Module", position: [0, -1.2, 1] },
+                { text: "Battery", position: [0, -1.5, 1.2] },
+                { text: "TP4056 Module", position: [0, -2, 1.2] }
+            ];
+
+            labels.forEach(label => {
+                const textGeometry = new THREE.TextGeometry(label.text, {
+                    font: font,
+                    size: 0.2,
+                    height: 0.05,
+                });
+                const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+                textMesh.position.set(...label.position);
+                parentGroup.add(textMesh); // Add label to the same parent group
+            });
+        });
+
+        // Camera position
+        camera.position.set(10, 5, 10);
+        camera.lookAt(0, 0, 0);
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            parentGroup.rotation.y += 0.01; // Rotate the entire group
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
